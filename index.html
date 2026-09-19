@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Villa Honegg · Wedding Vendor CRM</title>
+<style>
+  :root{
+    --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --bg:#faf9f7; --card:#ffffff;
+    --accent:#2f5d50;
+    --accent-soft:#e9f0ec; --gold:#b98a2f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{background:#20312b;color:#f5f2ec;padding:28px 20px 24px}
+  header h1{margin:0 0 6px;font-size:24px;font-weight:650;letter-spacing:.2px}
+  header p{margin:0;color:#c9cfc9;font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#f5f2ec;font-size:12.5px;padding:5px 11px;border-radius:999px}
+  main{max-width:1280px;margin:0 auto;padding:20px 16px 80px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:18px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .stat .n{font-size:22px;font-weight:700}
+  .stat .l{font-size:12px;color:var(--muted)}
+  .tabs{display:flex;gap:6px;margin:18px 0 14px;border-bottom:1px solid var(--line);padding-bottom:0;flex-wrap:wrap}
+  .tab{border:none;background:none;padding:10px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .board{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+  .col{background:#f1efeb;border-radius:12px;padding:10px;min-height:200px}
+  .col h3{margin:2px 4px 10px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .col h3 .count{background:#fff;border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;font-size:11px}
+  .vcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s}
+  .vcard:hover{box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  .vcard .nm{font-weight:650;font-size:14px}
+  .vcard .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;margin:6px 4px 0 0}
+  .b-photo{background:#e8f0fe;color:#1a56db}
+  .b-video{background:#f3e8ff;color:#7e22ce}
+  .b-honegg{background:#fef3c7;color:#92400e}
+  .b-lake{background:#e0f2fe;color:#075985}
+  .b-avail{background:#dcfce7;color:#166534}
+  .b-flag{background:#fee2e2;color:#991b1b}
+  .b-dm{background:#f1f5f9;color:#475569}
+  .reply{font-size:12px;color:var(--muted);margin-top:6px;font-style:italic}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f6f5f2;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  tr:last-child td{border-bottom:none}
+  .ig-table td:first-child{font-weight:650}
+  a{color:var(--accent)}
+  .timeline{list-style:none;margin:0;padding:0}
+  .timeline li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13.5px}
+  .timeline .t{color:var(--muted);font-size:12px;display:block}
+  .modal-bg{position:fixed;inset:0;background:rgba(15,23,20,.55);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow-y:auto}
+  .modal-bg.open{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:640px;width:100%;padding:24px;position:relative}
+  .modal h2{margin:0 0 4px;font-size:20px}
+  .modal .x{position:absolute;top:14px;right:16px;border:none;background:none;font-size:20px;cursor:pointer;color:var(--muted)}
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:13.5px;margin:14px 0}
+  .kv dt{color:var(--muted);font-weight:600}
+  .kv dd{margin:0}
+  .status-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .sbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)}
+  .sbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13.5px;resize:vertical}
+  .save-note{margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13.5px;font-weight:650;cursor:pointer}
+  .note-saved{font-size:12px;color:var(--accent);margin-left:10px;display:none}
+  .section{display:none}
+  .section.active{display:block}
+  .legend{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+  footer{max-width:1280px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:12px}
+  @media(max-width:700px){.board{grid-template-columns:repeat(5,240px)}.kv{grid-template-columns:1fr}th:nth-child(n+6),td:nth-child(n+6){display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Villa Honegg · Wedding Vendor CRM</h1>
+  <p>Kevin &amp; Caroline · Saturday, September 4, 2027 · Villa Honegg, above Lake Lucerne, Switzerland</p>
+  <div class="chips">
+    <span class="chip">25–80 guests</span>
+    <span class="chip">Planner: Kristi Lee</span>
+    <span class="chip">Photo budget: 10–15k (flex to 20k)</span>
+    <span class="chip">Named humans only, no studios</span>
+  </div>
+</header>
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="pipeline">Pipeline</button>
+    <button class="tab" data-tab="compare">Compare quotes</button>
+    <button class="tab" data-tab="instagram">Instagram</button>
+    <button class="tab" data-tab="timeline">Timeline</button>
+  </div>
+
+  <section class="section active" id="sec-pipeline">
+    <p class="legend">Click a card for full details, reply notes, and status. Status changes and notes save in this browser.</p>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section class="section" id="sec-compare">
+    <p class="legend">Published starting prices and quoted figures as replies come in. Inquiry-only vendors show a dash until they quote.</p>
+    <div style="overflow-x:auto"><table id="compare-table"></table></div>
+  </section>
+
+  <section class="section" id="sec-instagram">
+    <p class="legend">Every vendor got an Instagram message on Sept 19, 2026. Inbox monitored from <b>@_kevinfrederick</b>.</p>
+    <div style="overflow-x:auto"><table class="ig-table" id="ig-table"></table></div>
+  </section>
+
+  <section class="section" id="sec-timeline">
+    <ul class="timeline" id="timeline"></ul>
+  </section>
+</main>
+<footer>Private tracker · statuses and notes are stored locally in this browser · Gmail replies watched every 12 hours</footer>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal"></div>
+</div>
+<script>
+const VENDORS = [
+{id:"deletraz",name:"Fabien Delétraz",kind:"photo",ig:"fabiendeletraz",route:"Contact form",contactedAt:"Sept 19, 19:32 UTC",lakeFit:"honegg",lakeNote:"Dedicated Villa Honegg venue guide page",
+ style:"Candid documentary storytelling, fine-art / fashion-inspired editorial portraits. Solo, never outsources.",
+ base:"Switzerland",pricePub:"From CHF 3,900 · typical full-day CHF 5,500+",priceQuote:"—",avail:"—",coverage:"Full day",team:"Solo (+2nd shooter optional)",
+ deliverables:"Online gallery, full printing rights, fine-art albums",turnaround:"—",travel:"Depends on distance",backup:"—",raw:"—",drone:"Ask",deposit:"CHF 1,000 retainer",
+ reply:"—",notes:"",flag:""},
+{id:"vogeli",name:"Brianna Vögeli",kind:"photo",ig:"briannavoegeliphotography",route:"Email",contactedAt:"Sept 19",lakeFit:"honegg",lakeNote:"Shot a full elopement AT Villa Honegg (Stacie & Jimmy)",
+ style:"Soft, refined documentary with an editorial edge. Solo founder/photographer.",
+ base:"Graubünden, Switzerland (Canadian)",pricePub:"From CHF 4,500",priceQuote:"—",avail:"—",coverage:"Full day",team:"Solo (2nd photographer addable)",
+ deliverables:"~80–100 photos/hour, high-res gallery, print shop, heirloom albums",turnaround:"Sneak peek 1–2 wks · full gallery 8–10 wks",travel:"Included for Swiss weddings",backup:"—",raw:"—",drone:"Free where permitted",deposit:"—",
+ reply:"—",notes:"",flag:""},
+{id:"korn",name:"Yana Korn",kind:"photo",ig:"yana_korn",route:"Contact form",contactedAt:"Sept 19, 19:36 UTC",lakeFit:"",lakeNote:"Alpine weddings, no lake work found",
+ style:"Elegant storytelling with a fashion touch. Solo for photo; partner video team for films.",
+ base:"Frankfurt, Germany",pricePub:"Inquiry only (~$4,000 ballpark)",priceQuote:"—",avail:"—",coverage:"~10 hours typical",team:"Solo",
+ deliverables:"—",turnaround:"—",travel:"From Frankfurt — ask",backup:"—",raw:"—",drone:"Ask",deposit:"—",
+ reply:"—",notes:"",flag:"Caps at 23 weddings/year — late-summer 2027 may book early"},
+{id:"fortune",name:"Maïlys Fortune & Greg",kind:"photo",ig:"mailysfortunephotography",route:"Contact form",contactedAt:"Sept 19, 19:44 UTC",lakeFit:"lake",lakeNote:"Style Me Pretty Lake Lucerne (Vitznau) wedding",
+ style:"Bright, luminous painterly editorial portraits + genuine candids. Duo, two lead photographers.",
+ base:"Lake Geneva, Switzerland",pricePub:"Inquiry only (tailored proposals)",priceQuote:"—",avail:"—",coverage:"Full-day duo as standard",team:"Duo",
+ deliverables:"Digital + 35mm film, engagement sessions, albums",turnaround:"Preview after wedding · full gallery 6–12 wks",travel:"From Lake Geneva — ask",backup:"—",raw:"—",drone:"Yes (testimonial-praised)",deposit:"30% retainer, balance 30 days before",
+ reply:"—",notes:"",flag:""},
+{id:"gori",name:"Raul Gori",kind:"photo",ig:"raulgoriphotography",route:"Contact form",contactedAt:"Sept 19, 19:47 UTC",lakeFit:"lake",lakeNote:"Full gallery at Park Hotel Vitznau (Lisa & Gallus)",
+ style:"Elegant spontaneous reportage, unobtrusive. Works with collaborating photographers.",
+ base:"Tuscany, Italy",pricePub:"Inquiry only (€2,000–5,000 ballpark)",priceQuote:"—",avail:"—",coverage:"Up to 10 hours",team:"Raul + second photographer",
+ deliverables:"~1,000–1,500 images, private online gallery",turnaround:"2–3 months",travel:"From Tuscany — ask",backup:"—",raw:"—",drone:"Listed on matrimonio.com — confirm",deposit:"—",
+ reply:"—",notes:"",flag:"Confirm Raul personally attends (vs assigning a collaborator)"},
+{id:"bonnet",name:"Carla Bonnet",kind:"photo",ig:"carlabonnet_",route:"Contact form",contactedAt:"Sept 19, 19:51 UTC",lakeFit:"lake",lakeNote:"Dedicated Lake Lucerne photographer page",
+ style:"Documentary with an artistic approach — timeless, elegant, spontaneous. Solo brand.",
+ base:"Madrid, Spain",pricePub:"Inquiry only (personalized proposal)",priceQuote:"—",avail:"—",coverage:"Full day",team:"Solo",
+ deliverables:"500–800+ images minimum (+B&W versions), high-res, no watermarks",turnaround:"~1 month",travel:"Included in personalized proposal",backup:"—",raw:"—",drone:"Ask",deposit:"Contract + first payment holds date",
+ reply:"—",notes:"",flag:"IG feed dormant since early 2023 (stories only) — confirm actively booking"},
+{id:"bogucki",name:"Magnus Bogucki",kind:"photo",ig:"magnusbogucki",route:"Contact form",contactedAt:"Sept 19, 19:59 UTC",lakeFit:"lake",lakeNote:"Park Hotel Vitznau archive (Vitznauerhof, Weggis)",
+ style:"Moment-driven candid storytelling, documentary with warmth. Swedish, Switzerland-based solo.",
+ base:"Zug, Switzerland (~30 min from Honegg)",pricePub:"Inquiry only",priceQuote:"—",avail:"—",coverage:"Full day",team:"Solo",
+ deliverables:"Albums & handmade photo boxes, timeline planning",turnaround:"—",travel:"No surcharge policy stated",backup:"—",raw:"—",drone:"Ask",deposit:"—",
+ reply:"Auto-confirmation: “Thanks for your message. I will come back to you shortly.”",notes:"",flag:"",status0:"acknowledged"},
+{id:"yasirov",name:"YASIROV Films · Anton & Sabina",kind:"video",ig:"anton_yasirov",route:"Contact form",contactedAt:"Sept 19, 19:53 UTC",lakeFit:"honegg",lakeNote:"Filmed a wedding AT Villa Honegg (Alex & Alina)",
+ style:"Quiet, discreet cinematic documentary — natural light only, no staging. Named duo.",
+ base:"Como, Italy",pricePub:"€5,000–€9,000 full films",priceQuote:"—",avail:"—",coverage:"Full day",team:"Duo",
+ deliverables:"Raw footage, digital rights, highlight reel, documentary movie, short cinematic movie, trailer, social versions",turnaround:"4–16 weeks",travel:"Included for Italy & Switzerland",backup:"—",raw:"Included",drone:"Included where allowed",deposit:"—",
+ reply:"—",notes:"",flag:""},
+{id:"venitis",name:"Beyond Vision · Anthony Venitis",kind:"video",ig:"bvaerial",route:"Email",contactedAt:"Sept 19",lakeFit:"lake",lakeNote:"“Leaps and Bounds” at Park Hotel Vitznau (WEVSY Video of the Day)",
+ style:"Emotional, story-driven luxury films. Individual principal + multi-camera team.",
+ base:"Athens, Greece",pricePub:"Inquiry only (Premium)",priceQuote:"—",avail:"—",coverage:"Full day",team:"Anthony + team",
+ deliverables:"Highlight-style films, trailers, feature “movie” edits — all custom",turnaround:"Ask",travel:"Ask (separate or rolled in)",backup:"—",raw:"—",drone:"Yes (DJI in kit)",deposit:"—",
+ reply:"—",notes:"",flag:"World's Best Wedding Filmmaker 2023 (WEVSY)"},
+{id:"gattotigre",name:"Gattotigre · Angela & Paola",kind:"video",ig:"gattotigrevideo",route:"Contact form",contactedAt:"Sept 19, 20:00 UTC",lakeFit:"lake",lakeNote:"St. Charles Hall, Lucerne (Min & Michel)",
+ style:"Cinematic, fresh, editorial — polished with playful pacing. Two sisters.",
+ base:"Florence, Italy / Sydney, Australia",pricePub:"Inquiry only",priceQuote:"—",avail:"—",coverage:"Full day — ask",team:"Duo",
+ deliverables:"Feature film + shorter edit (per testimonials)",turnaround:"Ask (one testimonial hints long wait)",travel:"Ask",backup:"—",raw:"—",drone:"Ask",deposit:"—",
+ reply:"Auto-confirmation received at kfguiang@gmail.com",notes:"",flag:"Site says “Now booking 2026” — no 2027 statement yet",status0:"acknowledged"},
+{id:"become1",name:"2Become1 · Jessica & Vlad",kind:"video",ig:"2become1video",route:"Email",contactedAt:"Sept 19",lakeFit:"lake",lakeNote:"Credited on Style Me Pretty Lake Lucerne (Vitznau) wedding",
+ style:"Discreet, joyful reportage, cinema-inspired. Confirmed duo.",
+ base:"Abruzzo, Italy",pricePub:"Inquiry only",priceQuote:"—",avail:"—",coverage:"Prep to party",team:"Duo (one or more videographers)",
+ deliverables:"Digital delivery in handmade wooden box",turnaround:"A few months",travel:"Ask",backup:"—",raw:"—",drone:"Ask",deposit:"—",
+ reply:"—",notes:"",flag:"Website showed casino/spam injection during research — verify via IG/YouTube"},
+{id:"emma",name:"Story Of Your Day · Emma Wilson",kind:"video",ig:"storyofyourday",route:"Contact form",contactedAt:"Sept 19, 19:55 UTC",lakeFit:"lake",lakeNote:"Swiss-based, Villa Honegg in her venue guide",
+ style:"Story-led documentary cinematic films; two decades as a BBC video journalist. You book Emma — directed, filmed, edited by her, no exceptions.",
+ base:"Wengen, Switzerland (~1 hr from Honegg)",pricePub:"Inquiry only",priceQuote:"In attached guide — bespoke proposal offered",avail:"YES — Sept 4, 2027",coverage:"Full day — ask",team:"Solo (Emma)",
+ deliverables:"Bespoke commissions: feature, highlights, teaser, social/vertical edits",turnaround:"Film within 1 month",travel:"NOT included in commission — ask",backup:"—",raw:"—",drone:"Yes, via licensed pilot at her discretion",deposit:"20% non-refundable, balance 60 days before",
+ reply:"Replied Sept 19, 20:41 UTC. AVAILABLE. Audio: ex-BBC, multiple pro sources + backups, mountain/outdoor experienced. Limits commissions per year. Proposed a call from 18:00 CEST Sun Sept 20 (noon EDT). Asked where we are based.",
+ notes:"",flag:"Strong first yes — call proposed",status0:"replied"},
+{id:"gomango",name:"Gomango · Sanya & Bart",kind:"video",ig:"gomango.weddingfilms",route:"Contact form (minimal)",contactedAt:"Sept 19, 20:00 UTC",lakeFit:"",lakeNote:"Switzerland Tourism listing (Lucerne region)",
+ style:"Emotional cinematic films; duo coverage (Bart films, Sanya photographs); photo+video bundles.",
+ base:"Zürich, Switzerland",pricePub:"Inquiry only",priceQuote:"—",avail:"—",coverage:"Full day — ask",team:"Duo",
+ deliverables:"Cinematic wedding films",turnaround:"—",travel:"No CH surcharge published",backup:"—",raw:"—",drone:"Ask",deposit:"—",
+ reply:"—",notes:"",flag:"IG dormant since Jan 2025 — confirm responsive & operating"},
+{id:"philip",name:"Philip London",kind:"video",ig:"philiplondonfilms",route:"Instagram DM",contactedAt:"Sept 19, ~20:04 UTC",lakeFit:"lake",lakeNote:"Lake Lucerne wedding film (Tamara & Mike) — his proudest project",
+ style:"Unobtrusive, laid-back cinematic films with painterly light. One-man operation.",
+ base:"London, UK",pricePub:"Inquiry only",priceQuote:"—",avail:"—",coverage:"Full day — ask",team:"Solo",
+ deliverables:"Shorter cinematic wedding video per wedding",turnaround:"Ask",travel:"Ask",backup:"—",raw:"—",drone:"Yes",deposit:"—",
+ reply:"—",notes:"",flag:"Website down during outreach — contacted via IG DM. Videographer of the Year 2026"}
+];
+
+const STATUSES = ["contacted","acknowledged","replied","shortlisted","booked","out"];
+const STATUS_LABEL = {contacted:"Contacted",acknowledged:"Acknowledged",replied:"Replied",shortlisted:"Shortlisted",booked:"Booked",out:"Out"};
+const COLS = [["contacted","Contacted"],["acknowledged","Acknowledged"],["replied","Replied"],["shortlisted","Shortlisted"],["booked","Booked"]];
+const STORE_KEY = "vhonegg-crm-v1";
+
+let store = {status:{}, notes:{}};
+try { store = Object.assign(store, JSON.parse(localStorage.getItem(STORE_KEY)||"{}")); } catch(e){}
+
+function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+function vStatus(v){ return store.status[v.id] || v.status0 || "contacted"; }
+function vNotes(v){ return store.notes[v.id] !== undefined ? store.notes[v.id] : (v.notes||""); }
+function igUrl(h){ return "https://www.instagram.com/"+h+"/"; }
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function badges(v){
+  let b = '<span class="badge '+(v.kind==="photo"?"b-photo":"b-video")+'">'+(v.kind==="photo"?"Photo":"Video")+'</span>';
+  if(v.lakeFit==="honegg") b += '<span class="badge b-honegg">Villa Honegg work</span>';
+  else if(v.lakeFit==="lake") b += '<span class="badge b-lake">Lake Lucerne work</span>';
+  if(v.avail && v.avail.indexOf("YES")===0) b += '<span class="badge b-avail">Available ✓</span>';
+  if(v.flag) b += '<span class="badge b-flag">Note</span>';
+  return b;
+}
+
+function renderStats(){
+  const counts = {}; STATUSES.forEach(s=>counts[s]=0);
+  VENDORS.forEach(v=>counts[vStatus(v)]++);
+  const photos = VENDORS.filter(v=>v.kind==="photo").length, videos = VENDORS.length-photos;
+  const awaiting = counts.contacted+counts.acknowledged;
+  document.getElementById("stats").innerHTML =
+    stat(VENDORS.length,"vendors contacted") + stat(photos,"photographers") + stat(videos,"videographers") +
+    stat(counts.replied,"replied") + stat(awaiting,"awaiting reply") + stat(counts.shortlisted,"shortlisted") + stat(counts.booked,"booked");
+  function stat(n,l){ return '<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+}
+
+function renderBoard(){
+  const board = document.getElementById("board");
+  board.innerHTML = COLS.map(([key,label])=>{
+    const vs = VENDORS.filter(v=>vStatus(v)===key);
+    const cards = vs.map(v=>
+      '<div class="vcard" data-id="'+v.id+'"><div class="nm">'+esc(v.name)+'</div>'+
+      '<div class="sub">@'+esc(v.ig)+' · '+esc(v.route)+' · '+esc(v.contactedAt)+'</div>'+
+      '<div>'+badges(v)+'<span class="badge b-dm">IG ✓</span></div>'+
+      (vStatus(v)==="replied"||vStatus(v)==="shortlisted" ? '<div class="reply">'+esc(v.reply).slice(0,140)+'…</div>' : '')+
+      '</div>').join("") || '<div class="sub" style="padding:4px">—</div>';
+    return '<div class="col"><h3>'+label+'<span class="count">'+vs.length+'</span></h3>'+cards+'</div>';
+  }).join("");
+  // out column appended
+  const outs = VENDORS.filter(v=>vStatus(v)==="out");
+  board.innerHTML += '<div class="col"><h3>Out<span class="count">'+outs.length+'</span></h3>'+
+    (outs.map(v=>'<div class="vcard" data-id="'+v.id+'"><div class="nm">'+esc(v.name)+'</div><div class="sub">@'+esc(v.ig)+'</div></div>').join("")||'<div class="sub" style="padding:4px">—</div>')+'</div>';
+  board.querySelectorAll(".vcard").forEach(c=>c.addEventListener("click",()=>openModal(c.dataset.id)));
+}
+
+function renderCompare(){
+  const cols = ["Vendor","Type","Published pricing","Quoted","Availability","Coverage","Team","Deliverables","Turnaround","Travel","Deposit"];
+  let html = "<tr>"+cols.map(c=>"<th>"+c+"</th>").join("")+"</tr>";
+  VENDORS.forEach(v=>{
+    html += "<tr><td><b>"+esc(v.name)+"</b><br><span style='color:var(--muted)'>@"+esc(v.ig)+"</span></td>"+
+      "<td>"+(v.kind==="photo"?"Photo":"Video")+"</td><td>"+esc(v.pricePub)+"</td><td>"+esc(v.priceQuote)+"</td>"+
+      "<td>"+(v.avail&&v.avail.indexOf("YES")===0?'<b style="color:#166534">'+esc(v.avail)+"</b>":esc(v.avail))+"</td>"+
+      "<td>"+esc(v.coverage)+"</td><td>"+esc(v.team)+"</td><td>"+esc(v.deliverables)+"</td>"+
+      "<td>"+esc(v.turnaround)+"</td><td>"+esc(v.travel)+"</td><td>"+esc(v.deposit)+"</td></tr>";
+  });
+  document.getElementById("compare-table").innerHTML = html;
+}
+
+function renderIG(){
+  let html = "<tr><th>Vendor</th><th>Instagram</th><th>DM sent</th><th>Status</th><th>Watch</th></tr>";
+  VENDORS.forEach(v=>{
+    html += "<tr><td>"+esc(v.name)+"</td><td><a href='"+igUrl(v.ig)+"' target='_blank' rel='noopener'>@"+esc(v.ig)+"</a></td>"+
+      "<td>"+esc(v.contactedAt)+"</td><td>"+STATUS_LABEL[vStatus(v)]+"</td><td>Inbox @_kevinfrederick</td></tr>";
+  });
+  document.getElementById("ig-table").innerHTML = html;
+}
+
+function renderTimeline(){
+  const events = [
+    ["Sept 19, 2026 · 19:32–20:04 UTC","All 14 vendors contacted: 9 by website form, 2 by email, 1 by Instagram DM (Philip London, site down), plus follow-up DMs to all 14."],
+    ["Sept 19, 2026 · 20:00 UTC","Gattotigre auto-confirmation received."],
+    ["Sept 19, 2026 · 19:59 UTC","Magnus Bogucki auto-reply: “will come back to you shortly.”"],
+    ["Sept 19, 2026 · 20:41 UTC","Story Of Your Day (Emma Wilson) replied — AVAILABLE Sept 4, 2027. Proposed a call from 18:00 CEST Sun Sept 20."],
+    ["Sept 20, 2026 · 04:44 EDT","First scheduled Gmail reply check (every 12 hours)."],
+    ["Sept 20, 2026 · 12:00 EDT","Proposed call window with Emma Wilson (18:00 CEST)."]
+  ];
+  document.getElementById("timeline").innerHTML = events.map(e=>"<li><span class='t'>"+e[0]+"</span>"+e[1]+"</li>").join("");
+}
+
+function openModal(id){
+  const v = VENDORS.find(x=>x.id===id); if(!v) return;
+  const st = vStatus(v);
+  const rows = [
+    ["Type", v.kind==="photo"?"Photographer":"Videographer"],
+    ["Instagram", "<a href='"+igUrl(v.ig)+"' target='_blank' rel='noopener'>@"+esc(v.ig)+"</a>"],
+    ["Contact route", esc(v.route)+" · "+esc(v.contactedAt)],
+    ["Style / humans", esc(v.style)],
+    ["Based", esc(v.base)],
+    ["Lake fit", esc(v.lakeNote)],
+    ["Availability", v.avail],
+    ["Published pricing", v.pricePub],
+    ["Quoted", v.priceQuote],
+    ["Coverage", v.coverage],["Team", v.team],["Deliverables", v.deliverables],
+    ["Turnaround", v.turnaround],["Travel", v.travel],["Drone", v.drone],["Deposit", v.deposit],
+    ["Latest reply", v.reply==="—"?"No reply yet":esc(v.reply)]
+  ];
+  document.getElementById("modal").innerHTML =
+    '<button class="x" id="mx">×</button><h2>'+esc(v.name)+'</h2><div>'+badges(v)+'</div>'+
+    (v.flag?'<p style="font-size:13px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px">⚠ '+esc(v.flag)+'</p>':"")+
+    '<div class="status-row">'+STATUSES.map(s=>'<button class="sbtn'+(s===st?" on":"")+'" data-s="'+s+'">'+STATUS_LABEL[s]+'</button>').join("")+'</div>'+
+    '<dl class="kv">'+rows.map(r=>"<dt>"+r[0]+"</dt><dd>"+r[1]+"</dd>").join("")+'</dl>'+
+    '<h3 style="font-size:14px;margin:6px 0">Notes</h3><textarea id="mnotes" placeholder="Call notes, impressions, follow-ups…">'+esc(vNotes(v))+'</textarea><br>'+
+    '<button class="save-note" id="msave">Save note</button><span class="note-saved" id="msaved">Saved ✓</span>';
+  document.getElementById("modal-bg").classList.add("open");
+  document.getElementById("mx").onclick = closeModal;
+  document.getElementById("modal-bg").onclick = e=>{ if(e.target.id==="modal-bg") closeModal(); };
+  document.querySelectorAll(".sbtn").forEach(b=>b.onclick=()=>{ store.status[v.id]=b.dataset.s; saveStore(); openModal(id); renderAll(); });
+  document.getElementById("msave").onclick=()=>{ store.notes[v.id]=document.getElementById("mnotes").value; saveStore();
+    const s=document.getElementById("msaved"); s.style.display="inline"; setTimeout(()=>s.style.display="none",1500); };
+}
+function closeModal(){ document.getElementById("modal-bg").classList.remove("open"); }
+
+function renderAll(){ renderStats(); renderBoard(); renderCompare(); renderIG(); renderTimeline(); }
+
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active");
+  document.getElementById("sec-"+t.dataset.tab).classList.add("active");
+}));
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
+renderAll();
+</script>
+</body>
+</html>
